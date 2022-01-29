@@ -40,41 +40,68 @@ function obterEndereco(idUsuario, callback) {
     }, 2000);
 }
 
-const usuarioPromise = obterUsuario();
-//para manipular o sucesso usamos a função .then
-//para manipular o erro usamos a função .catch
-usuarioPromise
-    .then(function (usuario) {
-        return obterTelefone(usuario.id).then(function resolverTelefone(telefone) {
-            return {
-                usuario: {
-                    nome: usuario.nome,
-                    id: usuario.id,
-                },
-                telefone: telefone,
-            };
-        });
-    })
-    .then(function (resultado) {
-        const endereco = obterEnderecoAsync(resultado.usuario.id);
-        return endereco.then(function resolverEndereco(endereco) {
-            return {
-                usuario: resultado.usuario,
-                telefone: resultado.telefone,
-                endereco: endereco,
-            };
-        });
-    })
-    .then(function (resultado) {
-        console.log(`
-            Nome: ${resultado.usuario.nome}
-            Endereço: ${resultado.endereco.rua}, ${resultado.endereco.numero}
-            Telefone: (${resultado.telefone.ddd}) ${resultado.telefone.telefone}`);
-    })
-    .catch(function (error) {
-        console.log('error usuarioPromise', error);
-    });
+//1 passo adicionar a palavra async na função => automaticamente retornará uma promise
+main();
+async function main() {
+    try {
+        console.time('medida-promise');
 
+        const usuario = await obterUsuario();
+        const resultado = await Promise.all([
+            obterTelefone(usuario.id),
+            obterEnderecoAsync(usuario.id),
+        ]);
+        const telefone = resultado[0];
+        const endereco = resultado[1];
+
+        console.log(`
+        Nome: ${usuario.nome},
+        Telefone: (${telefone.ddd}) ${telefone.telefone},
+        Endereço: ${endereco.rua}, ${endereco.numero}`);
+
+        console.timeEnd('medida-promise');
+    } catch (error) {
+        console.log('error', error);
+    }
+}
+
+//promise
+// const usuarioPromise = obterUsuario();
+// //para manipular o sucesso usamos a função .then
+// //para manipular o erro usamos a função .catch
+// usuarioPromise
+//     .then(function (usuario) {
+//         return obterTelefone(usuario.id).then(function resolverTelefone(telefone) {
+//             return {
+//                 usuario: {
+//                     nome: usuario.nome,
+//                     id: usuario.id,
+//                 },
+//                 telefone: telefone,
+//             };
+//         });
+//     })
+//     .then(function (resultado) {
+//         const endereco = obterEnderecoAsync(resultado.usuario.id);
+//         return endereco.then(function resolverEndereco(endereco) {
+//             return {
+//                 usuario: resultado.usuario,
+//                 telefone: resultado.telefone,
+//                 endereco: endereco,
+//             };
+//         });
+//     })
+//     .then(function (resultado) {
+//         console.log(`
+//             Nome: ${resultado.usuario.nome}
+//             Endereço: ${resultado.endereco.rua}, ${resultado.endereco.numero}
+//             Telefone: (${resultado.telefone.ddd}) ${resultado.telefone.telefone}`);
+//     })
+//     .catch(function (error) {
+//         console.log('error usuarioPromise', error);
+//     });
+
+//callback
 // obterUsuario(function resolverUsuario(error, usuario) {
 //     if (error) {
 //         console.log('erro usuario', error);
