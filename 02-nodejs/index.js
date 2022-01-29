@@ -56,10 +56,3 @@ obterUsuario(function resolverUsuario(error, usuario) {
         });
     });
 });
-
-// console.log('usuario', usuario);
-// const telefone = obterTelefone(usuario.id);
-// const endereco = obterEndereco(usuario.id);
-
-// console.log('telefone', telefone);
-// console.log('endereco', endereco);
