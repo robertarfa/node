@@ -1,5 +1,7 @@
 docker ps -- pra ver os containers
 
+## ---- POSTGRES
+
 docker run \
  --name postgres \
  -e POSTGRES_USER=robertarfa \
